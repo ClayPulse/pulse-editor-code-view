@@ -21,7 +21,7 @@ function getLocalNetworkIP() {
 
 const origin = getLocalNetworkIP();
 
-const modulePath = `http://${origin}:3001/${pulseConfig.id}/${pulseConfig.version}/`;
+const modulePath = `https://pulseeditor.blob.core.windows.net/extension/${pulseConfig.id}/${pulseConfig.version}/`;
 
 const previewConfig: WebpackConfig & DevServerConfig = {
   entry: {
