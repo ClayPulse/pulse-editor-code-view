@@ -1,21 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import "./tailwind.css";
+import CodeEditorView from "./component/code-editor-view";
 import config from "../pulse.config";
 
 export const Config = config;
 
 export default function Main() {
-  const [count, setCount] = useState<number>(0);
+  useEffect(() => {
+    console.log("Extension loaded");
 
-  return (
-    <div className="p-2">
-      <button
-        className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-sm"
-        onClick={() => setCount(count + 1)}
-      >
-        Click me
-      </button>
-      <p className="text-blue-400">{count}</p>
-    </div>
-  );
+    return () => {
+      console.log("Extension unloaded");
+    };
+  }, []);
+  return <CodeEditorView />;
 }
