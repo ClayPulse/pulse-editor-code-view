@@ -1,4 +1,4 @@
-import { AccessEnum, Agent } from "@pulse-editor/types";
+import { AccessEnum, Agent } from "@pulse-editor/shared-utils";
 
 export const InlineSuggestionAgent: Agent = {
   name: "inline-suggestion",

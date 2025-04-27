@@ -16,7 +16,7 @@ import {
   useNotification,
   useTheme,
 } from "@pulse-editor/react-api";
-import { FileViewModel } from "@pulse-editor/types";
+import { FileViewModel } from "@pulse-editor/shared-utils";
 import { Config } from "../main";
 import {
   InlineSuggestionAgent,
