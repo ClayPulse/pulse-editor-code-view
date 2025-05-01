@@ -12,7 +12,6 @@ const config: ExtensionConfig = {
   displayName: packageJson.displayName,
   description: packageJson.description,
   version: packageJson.version,
-  author: "ClayPulse",
   extensionType: ExtensionTypeEnum.FileView,
   fileTypes: ["txt", "json", "py", "cpp", "c", "tsx", "ts", "js", "jsx"],
 };
