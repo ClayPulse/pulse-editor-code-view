@@ -2,7 +2,7 @@ import ReactCodeMirror, {
   Extension,
   ReactCodeMirrorRef,
 } from "@uiw/react-codemirror";
-import {  useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { vscodeDark, vscodeLight } from "@uiw/codemirror-theme-vscode";
 
 import React from "react";
@@ -170,20 +170,19 @@ export default function CodeEditorView() {
 
   /* Set up theme */
   const [theme, setTheme] = useState(vscodeDark);
-  const { theme: pulseTheme } = useTheme(moduleName);
+  const { theme: pulseTheme } = useTheme();
   const cmRef = useRef<ReactCodeMirrorRef>(null);
   /* Set editor content */
   const [viewDocument, setViewDocument] = useState<FileViewModel | undefined>(
     undefined
   );
-  const { isReady, installAgent, runAgentMethod } = useAgents(moduleName);
+  const { isReady, installAgent, runAgentMethod } = useAgents();
   // setup a timer for delayed saving
   const saveTriggerRef = useRef<DelayedTrigger | undefined>(
     new DelayedTrigger(200)
   );
-  const { openNotification } = useNotification(moduleName);
-  const { viewFile, updateViewFile , setIsLoaded} = useFileView(moduleName);
-
+  const { openNotification } = useNotification();
+  const { viewFile, updateViewFile, setIsLoaded } = useFileView();
 
   const [cmFileExtension, setCmFileExtension] = useState<Extension | undefined>(
     undefined
@@ -260,7 +259,6 @@ export default function CodeEditorView() {
     return lines.join("\n");
   }
 
-
   function onContentChange(value: string) {
     setViewDocument((prev) => {
       // Return undefined if viewDocument is not set
@@ -288,9 +286,7 @@ export default function CodeEditorView() {
   }
 
   return (
-    <div
-      className="relative h-full w-full overflow-hidden rounded-lg bg-content2"
-    >
+    <div className="relative h-full w-full overflow-hidden rounded-lg bg-content2">
       {
         <ReactCodeMirror
           ref={cmRef}
