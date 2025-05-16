@@ -1,5 +1,11 @@
 # pulse_editor_code_view
 
+## 0.0.4
+
+### Patch Changes
+
+- Update agent config settings
+
 ## 0.0.3
 
 ### Patch Changes

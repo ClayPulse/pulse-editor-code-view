@@ -12,195 +12,87 @@ import { DelayedTrigger } from "../lib/delayed-trigger";
 
 import {
   useAgents,
+  useExtCommand,
   useFileView,
   useNotification,
   useTheme,
 } from "@pulse-editor/react-api";
-import { FileViewModel } from "@pulse-editor/shared-utils";
-import { Config } from "../main";
+import { ViewModel } from "@pulse-editor/shared-utils";
 import {
-  InlineSuggestionAgent,
+  inlineSuggestionAgent,
   InlineSuggestionAgentReturns,
 } from "../lib/agents/inline-suggestion-agent";
-
-// interface CodeEditorViewProps {
-//   width?: string;
-//   height?: string;
-//   view: FileViewModel;
-// }
-
-// export type CodeEditorViewRef = ViewRef & {
-//   applyChanges: (changes: LineChange[]) => void;
-// };
-
-// const CodeEditorView = forwardRef(
-//   ({ width, height, view }: CodeEditorViewProps) => {
-//     // useImperativeHandle(ref, () => ({
-//     //   updateViewDocument(viewDocument) {
-//     //     setViewDocument((prev) => {
-//     //       if (!prev) {
-//     //         return prev;
-//     //       }
-//     //       return {
-//     //         ...prev,
-//     //         ...viewDocument,
-//     //       };
-//     //     });
-//     //   },
-//     //   applyChanges: (lineChanges: LineChange[]) => {
-//     //     console.log("Applying changes", lineChanges);
-//     //     const cmView = cmRef.current?.view;
-
-//     //     if (!cmView) {
-//     //       openNotification(
-//     //         "CodeMirror view not found",
-//     //         NotificationTypeEnum.Error
-//     //       );
-//     //       return;
-//     //     }
-
-//     //     const addedLines: LineChange[] = [];
-//     //     const deletedLines: LineChange[] = [];
-//     //     const modifiedLines: LineChange[] = [];
-
-//     //     for (const change of lineChanges) {
-//     //       if (change.status === "added") {
-//     //         addedLines.push(change);
-//     //       } else if (change.status === "deleted") {
-//     //         deletedLines.push(change);
-//     //       } else if (change.status === "modified") {
-//     //         modifiedLines.push(change);
-//     //       }
-//     //     }
-
-//     //     // Process added lines
-//     //     const indexNormalizedAddedLines: LineChange[] = [];
-//     //     const sortedAddedLines = addedLines.sort((a, b) => a.index - b.index);
-//     //     let currentLine = 0;
-//     //     console.log("Sorted added lines", sortedAddedLines);
-//     //     for (let i = 0; i < sortedAddedLines.length; i++) {
-//     //       // The doc does not change between each transaction or change in one dispatch.
-//     //       // So we need to calculate the location based on the state of the doc before
-//     //       // applying the dispatch.
-//     //       console.log("Current line", currentLine);
-//     //       if (i === 0) {
-//     //         currentLine = sortedAddedLines[i].index;
-//     //         indexNormalizedAddedLines.push(sortedAddedLines[i]);
-//     //         continue;
-//     //       }
-
-//     //       // The current line continues the previous line
-//     //       if (sortedAddedLines[i].index === currentLine + i) {
-//     //         const normalizedLine: LineChange = {
-//     //           index: currentLine,
-//     //           content:
-//     //             indexNormalizedAddedLines.pop()?.content +
-//     //             "\n" +
-//     //             sortedAddedLines[i].content,
-//     //           status: "added",
-//     //         };
-//     //         indexNormalizedAddedLines.push(normalizedLine);
-//     //         console.log("Condensing lines", normalizedLine);
-//     //         continue;
-//     //       }
-
-//     //       // The current line is not continuous with the previous line,
-//     //       // i.e. there is a gap between the lines
-//     //       currentLine = sortedAddedLines[i].index - i - 1;
-
-//     //       indexNormalizedAddedLines.push(sortedAddedLines[i]);
-//     //     }
-
-//     //     const insertTransactions: TransactionSpec[] = [];
-//     //     for (const line of indexNormalizedAddedLines) {
-//     //       const location = cmView.state.doc.line(line.index).from;
-
-//     //       insertTransactions.push({
-//     //         changes: {
-//     //           from: location,
-//     //           insert: line.content + "\n",
-//     //         },
-//     //       });
-//     //     }
-
-//     //     // TODO: A temporary workaround to fix the out of transaction after insertion
-//     //     cmView.dispatch(...insertTransactions);
-
-//     //     const transactions: TransactionSpec[] = [];
-//     //     // Process deleted lines
-//     //     for (const line of deletedLines) {
-//     //       // The start of deleted line
-//     //       const from = cmView.state.doc.line(line.index).from;
-//     //       // The end of deleted line
-//     //       const to = cmView.state.doc.line(line.index).to;
-
-//     //       transactions.push({
-//     //         changes: {
-//     //           from: from,
-//     //           to: to,
-//     //           insert: "",
-//     //         },
-//     //       });
-//     //     }
-
-//     //     // Process modified lines
-//     //     for (const line of modifiedLines) {
-//     //       // The start of modified line
-//     //       const from = cmView.state.doc.line(line.index).from;
-//     //       // The end of modified line
-//     //       const to = cmView.state.doc.line(line.index).to;
-
-//     //       transactions.push({
-//     //         changes: {
-//     //           from: from,
-//     //           to: to,
-//     //           insert: line.content,
-//     //         },
-//     //       });
-//     //     }
-
-//     //     // Apply changes to the editor
-//     //     cmView.dispatch(...transactions);
-//     //   },
-//     // }));
-// );
+import { codingAgentCommandInfo } from "../lib/commands";
+import { diffLines } from "diff";
 
 export default function CodeEditorView() {
-  const moduleName = Config.displayName ?? Config.id;
-
   /* Set up theme */
   const [theme, setTheme] = useState(vscodeDark);
   const { theme: pulseTheme } = useTheme();
   const cmRef = useRef<ReactCodeMirrorRef>(null);
   /* Set editor content */
-  const [viewDocument, setViewDocument] = useState<FileViewModel | undefined>(
-    undefined
-  );
-  const { isReady, installAgent, runAgentMethod } = useAgents();
+  const [viewModel, setViewModel] = useState<ViewModel | undefined>(undefined);
+  const { runAgentMethod } = useAgents();
   // setup a timer for delayed saving
   const saveTriggerRef = useRef<DelayedTrigger | undefined>(
     new DelayedTrigger(200)
   );
   const { openNotification } = useNotification();
-  const { viewFile, updateViewFile, setIsLoaded } = useFileView();
+  const {
+    viewModel: savedViewModel,
+    updateViewModel,
+    setIsLoaded,
+  } = useFileView();
 
   const [cmFileExtension, setCmFileExtension] = useState<Extension | undefined>(
     undefined
   );
 
-  // try install the inline-suggestion agent
-  useEffect(() => {
-    if (isReady) installAgent(InlineSuggestionAgent);
-  }, [isReady]);
+  const { updateHandler } = useExtCommand(codingAgentCommandInfo);
 
   useEffect(() => {
-    if (viewFile) {
-      console.log("View file updated", viewFile);
+    updateHandler(async (args: any) => {
+      const { userMessage }: { userMessage: string } = args;
+
+      const {
+        updatedFile,
+        explanation,
+      }: { updatedFile: string; explanation: string } = await runAgentMethod(
+        "code-editor-agent",
+        "assistCoding",
+        {
+          fileContent: viewModel?.file?.content ?? "",
+          selectionInformationList: viewModel?.file?.selections?.map(
+            (selection) => ({
+              lineStart: selection.lineStart,
+              lineEnd: selection.lineEnd,
+              text: selection.text,
+            })
+          ),
+          instruction: userMessage,
+        }
+      );
+
+      const lineChanges = diffLines(
+        viewModel?.file?.content ?? "",
+        updatedFile
+      );
+      console.log("Found changes", lineChanges);
+
+      applyFileChanges(updatedFile);
+
+      return explanation;
+    });
+  }, [viewModel]);
+
+  useEffect(() => {
+    if (savedViewModel?.file) {
+      console.log("View file updated", savedViewModel);
       setIsLoaded(true);
-      setViewDocument(viewFile);
-      setCmFileExtension(getLanguageExtension(viewFile.filePath));
+      setViewModel(savedViewModel);
+      setCmFileExtension(getLanguageExtension(savedViewModel.file.path));
     }
-  }, [viewFile]);
+  }, [savedViewModel]);
 
   useEffect(() => {
     if (pulseTheme === "dark") {
@@ -212,10 +104,10 @@ export default function CodeEditorView() {
 
   // Update view upon view document changes
   useEffect(() => {
-    if (viewDocument !== undefined) {
-      updateViewFile(viewDocument);
+    if (viewModel !== undefined) {
+      updateViewModel(viewModel);
     }
-  }, [viewDocument]);
+  }, [viewModel]);
 
   async function agentFunc(
     codeContent: string,
@@ -228,16 +120,14 @@ export default function CodeEditorView() {
       cursorX,
       cursorY
     );
-    const result = await runAgentMethod(
-      InlineSuggestionAgent.name,
+    const result = (await runAgentMethod(
+      inlineSuggestionAgent.name,
       "predictLine",
       { fileContentWithIndicator },
       abortSignal
-    );
+    )) as InlineSuggestionAgentReturns;
 
-    const returns = result as InlineSuggestionAgentReturns;
-
-    return returns;
+    return result;
   }
 
   function getContentWithIndicator(
@@ -260,11 +150,12 @@ export default function CodeEditorView() {
   }
 
   function onContentChange(value: string) {
-    setViewDocument((prev) => {
+    setViewModel((prev) => {
       // Return undefined if viewDocument is not set
       if (!prev) {
         return prev;
       }
+
       const newDoc = {
         ...prev,
         fileContent: value,
@@ -273,16 +164,39 @@ export default function CodeEditorView() {
       // Notify Pulse Editor that the content has changed
       // Reset the save trigger
       saveTriggerRef.current?.reset(() => {
-        const updatedFileViewModel: FileViewModel = {
-          filePath: newDoc.filePath,
-          fileContent: value,
-          selections: newDoc.selections,
-          isActive: newDoc.isActive,
+        const updatedFileViewModel: ViewModel = {
+          viewId: newDoc.viewId,
+          isFocused: newDoc.isFocused,
+          file: {
+            path: newDoc.file?.path ?? "",
+            content: value,
+            selections: newDoc.file?.selections,
+          },
         };
-        updateViewFile(updatedFileViewModel);
+        updateViewModel(updatedFileViewModel);
       });
       return newDoc;
     });
+  }
+
+  function applyFileChanges(updatedFile: string) {
+    const cmView = cmRef.current?.view;
+
+    if (!cmView) {
+      return;
+    }
+
+    // Remove the old content
+    const modifyTransaction = cmView.state.update({
+      changes: {
+        from: 0,
+        to: cmView.state.doc.length,
+        insert: updatedFile,
+      },
+    });
+
+    // Apply the transactions
+    cmView.dispatch([modifyTransaction]);
   }
 
   return (
@@ -290,7 +204,7 @@ export default function CodeEditorView() {
       {
         <ReactCodeMirror
           ref={cmRef}
-          value={viewDocument?.fileContent}
+          value={viewModel?.file?.content ?? ""}
           onChange={onContentChange}
           extensions={
             cmFileExtension

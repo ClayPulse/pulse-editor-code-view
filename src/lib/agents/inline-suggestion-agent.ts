@@ -1,8 +1,8 @@
 import { AccessEnum, Agent } from "@pulse-editor/shared-utils";
 
-export const InlineSuggestionAgent: Agent = {
+export const inlineSuggestionAgent: Agent = {
   name: "inline-suggestion",
-  version: "v0.0.1",
+  version: "0.0.1",
   description:
     "Inline Suggestion agent provides code completion snippets for coding tasks.",
   systemPrompt: `You are a helpful code copilot who helps a software developer to code. \
@@ -18,6 +18,7 @@ You will fill in the middle of the code where "<FILL>" is indicated. `,
       name: "predictLine",
       parameters: {
         fileContentWithIndicator: {
+          name: "fileContentWithIndicator",
           type: "string",
           description: "The code to predict the next line of",
         },
@@ -44,6 +45,7 @@ at "<FILL>".
 `,
       returns: {
         snippet: {
+          name: "snippet",
           type: "string",
           description:
             "Suggestion using the same programming language as the code file.",

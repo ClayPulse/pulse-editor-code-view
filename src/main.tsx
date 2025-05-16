@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
 import "./tailwind.css";
+import React, { useEffect } from "react";
 import CodeEditorView from "./component/code-editor-view";
 import config from "../pulse.config";
 
@@ -13,5 +13,6 @@ export default function Main() {
       console.log("Extension unloaded");
     };
   }, []);
+
   return <CodeEditorView />;
 }
