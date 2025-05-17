@@ -50,8 +50,36 @@ export default function CodeEditorView() {
 
   const { updateHandler } = useExtCommand(codingAgentCommandInfo);
 
+  // Update codemirror doc when the view model changes
   useEffect(() => {
-    updateHandler(async (args: any) => {
+    if (savedViewModel?.file) {
+      console.log("View file updated", savedViewModel);
+      setIsLoaded(true);
+      setViewModel(savedViewModel);
+      setCmFileExtension(getLanguageExtension(savedViewModel.file.path));
+    }
+  }, [savedViewModel]);
+
+  useEffect(() => {
+    if (pulseTheme === "dark") {
+      setTheme(vscodeDark);
+    } else {
+      setTheme(vscodeLight);
+    }
+  }, [pulseTheme]);
+
+  // Update view upon view document changes
+  useEffect(() => {
+    if (viewModel !== undefined) {
+      updateViewModel(viewModel);
+
+      // Update the handler
+      updateHandler(getHandler());
+    }
+  }, [viewModel]);
+
+  function getHandler() {
+    const handler = async (args: any) => {
       const { userMessage }: { userMessage: string } = args;
 
       const {
@@ -82,32 +110,9 @@ export default function CodeEditorView() {
       applyFileChanges(updatedFile);
 
       return explanation;
-    });
-  }, [viewModel]);
-
-  useEffect(() => {
-    if (savedViewModel?.file) {
-      console.log("View file updated", savedViewModel);
-      setIsLoaded(true);
-      setViewModel(savedViewModel);
-      setCmFileExtension(getLanguageExtension(savedViewModel.file.path));
-    }
-  }, [savedViewModel]);
-
-  useEffect(() => {
-    if (pulseTheme === "dark") {
-      setTheme(vscodeDark);
-    } else {
-      setTheme(vscodeLight);
-    }
-  }, [pulseTheme]);
-
-  // Update view upon view document changes
-  useEffect(() => {
-    if (viewModel !== undefined) {
-      updateViewModel(viewModel);
-    }
-  }, [viewModel]);
+    };
+    return handler;
+  }
 
   async function agentFunc(
     codeContent: string,
