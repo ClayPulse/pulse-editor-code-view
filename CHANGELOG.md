@@ -1,5 +1,11 @@
 # pulse_editor_code_view
 
+## 0.0.6
+
+### Patch Changes
+
+- Update packages
+
 ## 0.0.5
 
 ### Patch Changes
