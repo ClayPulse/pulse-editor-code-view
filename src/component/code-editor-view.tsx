@@ -161,26 +161,21 @@ export default function CodeEditorView() {
         return prev;
       }
 
-      const newDoc = {
+      const updatedFileViewModel: ViewModel = {
         ...prev,
-        fileContent: value,
+        file: {
+          path: prev.file?.path ?? "",
+          content: value,
+          selections: prev.file?.selections,
+        },
       };
 
       // Notify Pulse Editor that the content has changed
       // Reset the save trigger
       saveTriggerRef.current?.reset(() => {
-        const updatedFileViewModel: ViewModel = {
-          viewId: newDoc.viewId,
-          isFocused: newDoc.isFocused,
-          file: {
-            path: newDoc.file?.path ?? "",
-            content: value,
-            selections: newDoc.file?.selections,
-          },
-        };
         updateViewModel(updatedFileViewModel);
       });
-      return newDoc;
+      return updatedFileViewModel;
     });
   }
 

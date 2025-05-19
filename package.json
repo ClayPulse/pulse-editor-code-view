@@ -2,7 +2,7 @@
   "name": "pulse_editor_code_view",
   "displayName": "Pulse Code Editor",
   "description": "A code editor extension for Pulse Editor",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,11 +13,15 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
+    "@codemirror/lang-css": "^6.3.1",
+    "@codemirror/lang-html": "^6.4.9",
     "@codemirror/lang-javascript": "^6.2.4",
+    "@codemirror/lang-json": "^6.0.1",
+    "@codemirror/lang-markdown": "^6.3.2",
     "@codemirror/lang-python": "^6.2.1",
     "@module-federation/enhanced": "^0.13.1",
-    "@pulse-editor/react-api": "^0.1.1-alpha.11",
-    "@pulse-editor/shared-utils": "^0.1.1-alpha.11",
+    "@pulse-editor/react-api": "^0.1.1-alpha.12",
+    "@pulse-editor/shared-utils": "^0.1.1-alpha.12",
     "@types/node": "^22.15.18",
     "@uiw/codemirror-theme-vscode": "^4.23.12",
     "@uiw/react-codemirror": "^4.23.12",

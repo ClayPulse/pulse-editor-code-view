@@ -1,5 +1,17 @@
 # pulse_editor_code_view
 
+## 0.0.8
+
+### Patch Changes
+
+- Fix file view model wrong structure bug
+
+## 0.0.7
+
+### Patch Changes
+
+- Add new language supports
+
 ## 0.0.6
 
 ### Patch Changes

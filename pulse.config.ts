@@ -18,7 +18,7 @@ const config: ExtensionConfig = {
   version: packageJson.version,
   author: "ClayPulse",
   extensionType: ExtensionTypeEnum.FileView,
-  fileTypes: ["txt", "json", "py", "cpp", "c", "tsx", "ts", "js", "jsx"],
+  fileTypes: ["txt", "json", "py", "cpp", "c", "tsx", "ts", "js", "jsx", "html", "markdown", "md", "yml", "gitignore"],
   agents: [
     inlineSuggestionAgent,
     codeEditorAgent,
