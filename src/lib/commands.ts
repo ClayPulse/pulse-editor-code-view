@@ -1,7 +1,7 @@
 import { ExtensionCommandInfo } from "@pulse-editor/shared-utils";
 
 export const codingAgentCommandInfo: ExtensionCommandInfo = {
-  name: "codingUsingFileContent",
+  name: "coding-using-file-content",
   description: "Generate or modify code using file content",
   parameters: {
     userMessage: {
