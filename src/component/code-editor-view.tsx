@@ -80,7 +80,10 @@ export default function CodeEditorView() {
 
   function getHandler() {
     const handler = async (args: any) => {
-      const { userMessage }: { userMessage: string } = args;
+      const {
+        userMessage,
+        knowledge,
+      }: { userMessage: string; knowledge: string } = args;
 
       const {
         updatedFile,
@@ -98,6 +101,7 @@ export default function CodeEditorView() {
             })
           ),
           instruction: userMessage,
+          knowledge: knowledge,
         }
       );
 

@@ -1,5 +1,30 @@
 # pulse_editor_code_view
 
+## 0.0.12
+
+### Patch Changes
+
+- Update agent config
+
+## 0.0.11
+
+### Patch Changes
+
+- Fix command arg bugs
+
+## 0.0.10
+
+### Patch Changes
+
+- Fix agent bug
+
+## 0.0.9
+
+### Patch Changes
+
+- Update code editor agent prompt to include context
+- 222632e: Update packages
+
 ## 0.0.8
 
 ### Patch Changes

@@ -9,6 +9,13 @@ export const codingAgentCommandInfo: ExtensionCommandInfo = {
       type: "string",
       description: "The message to send to the agent.",
     },
+    knowledge: {
+      name: "knowledge",
+      type: "string",
+      description:
+        "Additional knowledge that might be useful for the agent to understand user's instruction. \
+This is to give the agent more context about the task so they don't hallucinate. "
+    }
   },
 };
 

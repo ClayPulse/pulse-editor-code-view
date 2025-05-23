@@ -48,6 +48,13 @@ You must review the code and complete instruction from the developer.
           type: "string",
           description: "The instruction from the developer to modify the code.",
         },
+        knowledge: {
+          name: "knowledge",
+          type: "string",
+          description:
+            "Additional knowledge that might be useful for the agent to understand user's instruction. \
+This is to give the agent more context about the task so they don't hallucinate. "
+        }
       },
       prompt: `\
 You are provided with the code file, selected lines/blocks, and user's instruction. \
@@ -64,6 +71,10 @@ Selected lines/blocks:
 User's instruction:
 \`\`\`
 {instruction}
+\`\`\`
+Knowledge:
+\`\`\`
+{knowledge}
 \`\`\`
 `,
       returns: {
@@ -84,6 +95,6 @@ User's instruction:
   LLMConfig: {
     provider: "openai",
     modelName: "gpt-4o",
-    temperature: 0.7,
+    temperature: 0.95,
   },
 };
