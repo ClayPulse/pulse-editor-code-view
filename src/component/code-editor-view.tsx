@@ -14,6 +14,7 @@ import {
   useAgents,
   useExtCommand,
   useFileView,
+  useLoading,
   useNotification,
   useTheme,
 } from "@pulse-editor/react-api";
@@ -38,12 +39,9 @@ export default function CodeEditorView() {
     new DelayedTrigger(200)
   );
   const { openNotification } = useNotification();
-  const {
-    viewModel: savedViewModel,
-    updateViewModel,
-    setIsLoaded,
-  } = useFileView();
+  const { viewModel: savedViewModel, updateViewModel } = useFileView();
 
+  const { toggleLoading } = useLoading();
   const [cmFileExtension, setCmFileExtension] = useState<Extension | undefined>(
     undefined
   );
@@ -54,7 +52,7 @@ export default function CodeEditorView() {
   useEffect(() => {
     if (savedViewModel?.file) {
       console.log("View file updated", savedViewModel);
-      setIsLoaded(true);
+      toggleLoading(false);
       setViewModel(savedViewModel);
       setCmFileExtension(getLanguageExtension(savedViewModel.file.path));
     }
