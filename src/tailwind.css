@@ -1,6 +1,4 @@
-@layer theme, base, components, utilities;
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/utilities.css" layer(utilities);
+@import "tailwindcss";
 
 :root {
   --background: #ffffff;
@@ -22,5 +20,4 @@
 body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
-  margin: 0px;
 }
