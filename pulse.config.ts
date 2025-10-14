@@ -1,6 +1,8 @@
 import { AppConfig, AppTypeEnum } from "@pulse-editor/shared-utils";
 import packageJson from "./package.json" with { type: "json" };
 import { preRegisteredActions } from "./pregistered-actions";
+import { inlineSuggestionAgent } from "./src/lib/agents/inline-suggestion-agent";
+import { codeEditorAgent } from "./src/lib/agents/code-editor-agent";
 
 /**
  * Pulse Editor Extension Config
@@ -20,6 +22,11 @@ const config: AppConfig = {
   recommendedWidth: 360,
   thumbnail: "assets/thumbnail.png",
   preRegisteredActions: Object.values(preRegisteredActions),
+   fileTypes: ["txt", "json", "py", "cpp", "c", "tsx", "ts", "js", "jsx", "html", "markdown", "md", "yml", "gitignore"],
+  agents: [
+    inlineSuggestionAgent,
+    codeEditorAgent,
+  ],
 };
 
 export default config;
