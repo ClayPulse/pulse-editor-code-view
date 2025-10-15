@@ -18,7 +18,6 @@ You will fill in the middle of the code where "<FILL>" is indicated. `,
       name: "predictLine",
       parameters: {
         fileContentWithIndicator: {
-          name: "fileContentWithIndicator",
           type: "string",
           description: "The code to predict the next line of",
         },
@@ -45,7 +44,6 @@ at "<FILL>".
 `,
       returns: {
         snippet: {
-          name: "snippet",
           type: "string",
           description:
             "Suggestion using the same programming language as the code file.",

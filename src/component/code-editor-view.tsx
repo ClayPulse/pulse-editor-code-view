@@ -2,61 +2,104 @@ import ReactCodeMirror, {
   Extension,
   ReactCodeMirrorRef,
 } from "@uiw/react-codemirror";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { vscodeDark, vscodeLight } from "@uiw/codemirror-theme-vscode";
 
 import React from "react";
 import { codeInlineSuggestionExtension } from "../lib/codemirror-extensions/code-inline-suggestion";
 import { getLanguageExtension } from "../lib/codemirror-extensions/get-language-extension";
 import { DelayedTrigger } from "../lib/delayed-trigger";
-
 import {
   useAgents,
-  useExtCommand,
-  useFileView,
-  useLoading,
-  useNotification,
+  useRegisterAction,
   useTheme,
+  useReceiveFile,
+  useFile,
 } from "@pulse-editor/react-api";
-import { ViewModel } from "@pulse-editor/shared-utils";
 import {
   inlineSuggestionAgent,
   InlineSuggestionAgentReturns,
 } from "../lib/agents/inline-suggestion-agent";
-import { codingAgentCommandInfo } from "../lib/commands";
 import { diffLines } from "diff";
+import { preRegisteredActions } from "../../pregistered-actions";
 
 export default function CodeEditorView() {
   /* Set up theme */
-  const [theme, setTheme] = useState(vscodeDark);
-  const { theme: pulseTheme } = useTheme();
   const cmRef = useRef<ReactCodeMirrorRef>(null);
-  /* Set editor content */
-  const [viewModel, setViewModel] = useState<ViewModel | undefined>(undefined);
-  const { runAgentMethod } = useAgents();
   // setup a timer for delayed saving
   const saveTriggerRef = useRef<DelayedTrigger | undefined>(
     new DelayedTrigger(200)
   );
-  const { openNotification } = useNotification();
-  const { viewModel: savedViewModel, updateViewModel } = useFileView();
 
-  const { toggleLoading } = useLoading();
+  const { receivedFileUri } = useReceiveFile();
+  const { theme: pulseTheme } = useTheme();
+  const { runAgentMethod } = useAgents();
+  const { file, saveFile } = useFile(receivedFileUri);
+
+  const [fileContent, setFileContent] = useState("");
+  const [theme, setTheme] = useState(vscodeDark);
+  /* Set editor content */
+  // const [viewModel, setViewModel] = useState<ViewModel | undefined>(undefined);
   const [cmFileExtension, setCmFileExtension] = useState<Extension | undefined>(
     undefined
   );
 
-  const { updateHandler } = useExtCommand(codingAgentCommandInfo);
+  const codeAgentHandler = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async (args: any) => {
+      const {
+        userMessage,
+        knowledge,
+      }: { userMessage: string; knowledge: string } = args;
 
-  // Update codemirror doc when the view model changes
-  useEffect(() => {
-    if (savedViewModel?.file) {
-      console.log("View file updated", savedViewModel);
-      toggleLoading(false);
-      setViewModel(savedViewModel);
-      setCmFileExtension(getLanguageExtension(savedViewModel.file.path));
-    }
-  }, [savedViewModel]);
+      const selections = cmRef.current?.view?.state.selection.ranges.map(
+        (range) => {
+          const lineStart = cmRef.current?.view?.state.doc.lineAt(
+            range.from
+          ).number;
+          const lineEnd = cmRef.current?.view?.state.doc.lineAt(
+            range.to
+          ).number;
+          const text = cmRef.current?.view?.state.doc.sliceString(
+            range.from,
+            range.to
+          );
+
+          return {
+            lineStart: lineStart ?? 0,
+            lineEnd: lineEnd ?? 0,
+            text: text ?? "",
+          };
+        }
+      );
+
+      const {
+        updatedFile,
+        explanation,
+      }: { updatedFile: string; explanation: string } = await runAgentMethod(
+        "code-editor-agent",
+        "assistCoding",
+        {
+          fileContent: fileContent,
+          selectionInformationList: selections,
+          instruction: userMessage,
+          knowledge: knowledge,
+        }
+      );
+
+      const lineChanges = diffLines(fileContent, updatedFile);
+      console.log("Found changes", lineChanges);
+
+      applyFileChanges(updatedFile);
+
+      return explanation;
+    },
+    [file]
+  );
+
+  useRegisterAction(preRegisteredActions[0], codeAgentHandler, [
+    codeAgentHandler,
+  ]);
 
   useEffect(() => {
     if (pulseTheme === "dark") {
@@ -66,55 +109,17 @@ export default function CodeEditorView() {
     }
   }, [pulseTheme]);
 
-  // Update view upon view document changes
   useEffect(() => {
-    if (viewModel !== undefined) {
-      updateViewModel(viewModel);
-
-      // Update the handler
-      updateHandler(getHandler());
+    if (file) {
+      file.text().then((content) => setFileContent(content));
     }
-  }, [viewModel]);
+  }, [file]);
 
-  function getHandler() {
-    const handler = async (args: any) => {
-      const {
-        userMessage,
-        knowledge,
-      }: { userMessage: string; knowledge: string } = args;
-
-      const {
-        updatedFile,
-        explanation,
-      }: { updatedFile: string; explanation: string } = await runAgentMethod(
-        "code-editor-agent",
-        "assistCoding",
-        {
-          fileContent: viewModel?.file?.content ?? "",
-          selectionInformationList: viewModel?.file?.selections?.map(
-            (selection) => ({
-              lineStart: selection.lineStart,
-              lineEnd: selection.lineEnd,
-              text: selection.text,
-            })
-          ),
-          instruction: userMessage,
-          knowledge: knowledge,
-        }
-      );
-
-      const lineChanges = diffLines(
-        viewModel?.file?.content ?? "",
-        updatedFile
-      );
-      console.log("Found changes", lineChanges);
-
-      applyFileChanges(updatedFile);
-
-      return explanation;
-    };
-    return handler;
-  }
+  useEffect(() => {
+    if (file) {
+      setCmFileExtension(getLanguageExtension(file.name));
+    }
+  }, [file]);
 
   async function agentFunc(
     codeContent: string,
@@ -157,27 +162,8 @@ export default function CodeEditorView() {
   }
 
   function onContentChange(value: string) {
-    setViewModel((prev) => {
-      // Return undefined if viewDocument is not set
-      if (!prev) {
-        return prev;
-      }
-
-      const updatedFileViewModel: ViewModel = {
-        ...prev,
-        file: {
-          path: prev.file?.path ?? "",
-          content: value,
-          selections: prev.file?.selections,
-        },
-      };
-
-      // Notify Pulse Editor that the content has changed
-      // Reset the save trigger
-      saveTriggerRef.current?.reset(() => {
-        updateViewModel(updatedFileViewModel);
-      });
-      return updatedFileViewModel;
+    saveTriggerRef.current?.reset(() => {
+      saveFile(value);
     });
   }
 
@@ -206,7 +192,7 @@ export default function CodeEditorView() {
       {
         <ReactCodeMirror
           ref={cmRef}
-          value={viewModel?.file?.content ?? ""}
+          value={fileContent}
           onChange={onContentChange}
           extensions={
             cmFileExtension
