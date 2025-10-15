@@ -13,7 +13,6 @@ import {
   useAgents,
   useRegisterAction,
   useTheme,
-  useReceiveFile,
   useFile,
 } from "@pulse-editor/react-api";
 import {
@@ -23,7 +22,7 @@ import {
 import { diffLines } from "diff";
 import { preRegisteredActions } from "../../pregistered-actions";
 
-export default function CodeEditorView() {
+export default function CodeEditorView({ uri }: { uri: string }) {
   /* Set up theme */
   const cmRef = useRef<ReactCodeMirrorRef>(null);
   // setup a timer for delayed saving
@@ -31,10 +30,9 @@ export default function CodeEditorView() {
     new DelayedTrigger(200)
   );
 
-  const { receivedFileUri } = useReceiveFile();
   const { theme: pulseTheme } = useTheme();
   const { runAgentMethod } = useAgents();
-  const { file, saveFile } = useFile(receivedFileUri);
+  const { file, saveFile } = useFile(uri);
 
   const [fileContent, setFileContent] = useState("");
   const [theme, setTheme] = useState(vscodeDark);
@@ -97,9 +95,11 @@ export default function CodeEditorView() {
     [file]
   );
 
-  useRegisterAction(preRegisteredActions[0], codeAgentHandler, [
+  useRegisterAction(
+    preRegisteredActions["coding-using-file-content"],
     codeAgentHandler,
-  ]);
+    [codeAgentHandler]
+  );
 
   useEffect(() => {
     if (pulseTheme === "dark") {
@@ -188,7 +188,7 @@ export default function CodeEditorView() {
   }
 
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-lg bg-content2">
+    <div className="relative h-full w-full overflow-hidden rounded-lg bg-content2 ">
       {
         <ReactCodeMirror
           ref={cmRef}
