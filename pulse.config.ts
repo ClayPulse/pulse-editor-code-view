@@ -1,29 +1,32 @@
-import { ExtensionConfig, ExtensionTypeEnum } from "@pulse-editor/shared-utils";
+import { AppConfig, AppTypeEnum } from "@pulse-editor/shared-utils";
 import packageJson from "./package.json" with { type: "json" };
+import { preRegisteredActions } from "./pregistered-actions";
 import { inlineSuggestionAgent } from "./src/lib/agents/inline-suggestion-agent";
 import { codeEditorAgent } from "./src/lib/agents/code-editor-agent";
-import { codingAgentCommandInfo } from "./src/lib/commands";
-
 
 /**
  * Pulse Editor Extension Config
  *
  */
-const config: ExtensionConfig = {
+const config: AppConfig = {
   // Do not use hyphen character '-' in the id. 
   // The id should be the same as the package name in package.json.
   id: packageJson.name,
+  version: packageJson.version,
+  libVersion: packageJson.dependencies["@pulse-editor/shared-utils"],
   displayName: packageJson.displayName,
   description: packageJson.description,
-  version: packageJson.version,
-  author: "ClayPulse",
-  extensionType: ExtensionTypeEnum.FileView,
-  fileTypes: ["txt", "json", "py", "cpp", "c", "tsx", "ts", "js", "jsx", "html", "markdown", "md", "yml", "gitignore"],
+  appType: AppTypeEnum.FileView,
+  visibility: "public",
+  recommendedHeight: 640,
+  recommendedWidth: 360,
+  thumbnail: "assets/thumbnail.png",
+  preRegisteredActions: Object.values(preRegisteredActions),
+   fileTypes: ["txt", "json", "py", "cpp", "c", "tsx", "ts", "js", "jsx", "html", "markdown", "md", "yml", "gitignore"],
   agents: [
     inlineSuggestionAgent,
     codeEditorAgent,
   ],
-  commandsInfoList: [codingAgentCommandInfo],
 };
 
 export default config;
