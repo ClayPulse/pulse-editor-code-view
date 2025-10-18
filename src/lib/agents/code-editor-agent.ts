@@ -46,8 +46,8 @@ You must review the code and complete instruction from the developer.
           type: "string",
           description:
             "Additional knowledge that might be useful for the agent to understand user's instruction. \
-This is to give the agent more context about the task so they don't hallucinate. "
-        }
+This is to give the agent more context about the task so they don't hallucinate. ",
+        },
       },
       prompt: `\
 You are provided with the code file, selected lines/blocks, and user's instruction. \
@@ -89,3 +89,4 @@ Knowledge:
     temperature: 0.95,
   },
 };
+

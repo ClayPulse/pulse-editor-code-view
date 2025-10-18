@@ -23,4 +23,24 @@ This is to give the agent more context about the task so they don't hallucinate.
       },
     },
   },
+  "vibe-code-pulse-app": {
+    name: "Vibe Code Pulse App",
+    description: "Develop a Pulse App with vibe coding",
+    parameters: {
+      userMessage: {
+        type: "string",
+        description: "The user message to send to the agent.",
+      },
+      terminal: {
+        type: "app-instance",
+        description: "The Pulse App terminal instance to run commands in.",
+      },
+    },
+    returns: {
+      response: {
+        type: "string",
+        description: "Agent's response to the user message.",
+      },
+    },
+  },
 };

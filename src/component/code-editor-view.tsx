@@ -7,13 +7,11 @@ import { vscodeDark, vscodeLight } from "@uiw/codemirror-theme-vscode";
 
 import React from "react";
 import { codeInlineSuggestionExtension } from "../lib/codemirror-extensions/code-inline-suggestion";
-import { getLanguageExtension } from "../lib/codemirror-extensions/get-language-extension";
 import { DelayedTrigger } from "../lib/delayed-trigger";
 import {
   useAgents,
   useRegisterAction,
   useTheme,
-  useFile,
 } from "@pulse-editor/react-api";
 import {
   inlineSuggestionAgent,
@@ -22,7 +20,15 @@ import {
 import { diffLines } from "diff";
 import { preRegisteredActions } from "../../pregistered-actions";
 
-export default function CodeEditorView({ uri }: { uri: string }) {
+export default function CodeEditorView({
+  fileContent,
+  saveFile,
+  cmFileExtension,
+}: {
+  fileContent: string;
+  saveFile: (content: string) => void;
+  cmFileExtension: Extension | undefined;
+}) {
   /* Set up theme */
   const cmRef = useRef<ReactCodeMirrorRef>(null);
   // setup a timer for delayed saving
@@ -32,15 +38,8 @@ export default function CodeEditorView({ uri }: { uri: string }) {
 
   const { theme: pulseTheme } = useTheme();
   const { runAgentMethod } = useAgents();
-  const { file, saveFile } = useFile(uri);
 
-  const [fileContent, setFileContent] = useState("");
   const [theme, setTheme] = useState(vscodeDark);
-  /* Set editor content */
-  // const [viewModel, setViewModel] = useState<ViewModel | undefined>(undefined);
-  const [cmFileExtension, setCmFileExtension] = useState<Extension | undefined>(
-    undefined
-  );
 
   const codeAgentHandler = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -92,7 +91,7 @@ export default function CodeEditorView({ uri }: { uri: string }) {
 
       return explanation;
     },
-    [file]
+    [fileContent]
   );
 
   useRegisterAction(
@@ -108,18 +107,6 @@ export default function CodeEditorView({ uri }: { uri: string }) {
       setTheme(vscodeLight);
     }
   }, [pulseTheme]);
-
-  useEffect(() => {
-    if (file) {
-      file.text().then((content) => setFileContent(content));
-    }
-  }, [file]);
-
-  useEffect(() => {
-    if (file) {
-      setCmFileExtension(getLanguageExtension(file.name));
-    }
-  }, [file]);
 
   async function agentFunc(
     codeContent: string,

@@ -3,6 +3,7 @@ import packageJson from "./package.json" with { type: "json" };
 import { preRegisteredActions } from "./pregistered-actions";
 import { inlineSuggestionAgent } from "./src/lib/agents/inline-suggestion-agent";
 import { codeEditorAgent } from "./src/lib/agents/code-editor-agent";
+import { vibeCodeAgent } from "./src/lib/agents/vibe-code-agent";
 
 /**
  * Pulse Editor Extension Config
@@ -26,6 +27,7 @@ const config: AppConfig = {
   agents: [
     inlineSuggestionAgent,
     codeEditorAgent,
+    vibeCodeAgent,
   ],
 };
 
