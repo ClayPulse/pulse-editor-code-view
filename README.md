@@ -1,5 +1,10 @@
-## Pulse Editor Extension Template
-This is a React template which you can use to make your own Pulse Editor extension. It uses Webpack Module Federation to share extensions with Pulse Editor.
+## Pulse App Template
+
+This is a React full-stack template which you can use to make your own Pulse Editor app. It uses Webpack Module Federation to share modules with Pulse Editor.
+
+For more information about Pulse Editor core and its ecosystem, visit our official [website](https://pulse-editor.com) and [documentation](https://docs.pulse-editor.com).
+
+## Get Started
 
 ### Create Pulse Editor extension app using CLI
 

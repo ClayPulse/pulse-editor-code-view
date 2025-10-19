@@ -1,8 +1,8 @@
 {
-  "name": "pulse_editor_code_view",
-  "displayName": "Pulse Code Editor",
-  "description": "A code editor based on CodeMirror 6 for Pulse Editor.",
-  "version": "0.0.17",
+  "name": "pulse_app_template",
+  "displayName": "Pulse App Template",
+  "description": "A template for creating Pulse App",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -16,18 +16,9 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@codemirror/lang-css": "^6.3.1",
-    "@codemirror/lang-html": "^6.4.9",
-    "@codemirror/lang-javascript": "^6.2.4",
-    "@codemirror/lang-json": "^6.0.1",
-    "@codemirror/lang-markdown": "^6.3.2",
-    "@codemirror/lang-python": "^6.2.1",
     "@pulse-editor/react-api": "^0.1.1-beta.55",
     "@pulse-editor/shared-utils": "^0.1.1-beta.55",
-    "@uiw/codemirror-theme-vscode": "^4.23.12",
-    "@uiw/react-codemirror": "^4.23.12",
     "cors": "^2.8.5",
-    "diff": "^8.0.1",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "html-webpack-plugin": "^5.6.4",
