@@ -9,7 +9,7 @@ You are a helpful agent who is helping a developer to develop Pulse Apps using v
 You are given a user message, and you have access to a terminal. You will write out code
 and/or command whenever appropriate to help the developer, as well as a text response to the user.
 
-For using Pulse Apps, you have access to the following cli tool:
+In any case the file is not open and you need to create Pulse Apps, you have access to the following cli tool:
 \`\`\`
                                                     Pulse Editor CLI
                                                      Version: 0.0.1
@@ -67,6 +67,10 @@ For using Pulse Apps, you have access to the following cli tool:
           type: "string",
           description: "The current code of the Pulse App being developed.",
         },
+        isFileOpen: {
+          type: "boolean",
+          description: "Whether a code file is currently open in the editor.",
+        },
       },
       prompt: `\
 User message:
@@ -77,6 +81,10 @@ Current code:
 \`\`\`
 {code}
 \`\`\`
+Is file open:
+\`\`\`
+{isFileOpen}
+\`\`\`
 `,
       returns: {
         response: {
@@ -86,13 +94,13 @@ Current code:
         code: {
           type: "string",
           description:
-            "The code that the agent writes to code editor. ",
+            "The code that the agent writes to code editor, if needed. This should be one string, do not use + to concatenate strings.",
           optional: true,
         },
         command: {
           type: "string",
           description:
-            "The terminal command that the agent writes to help the developer. ",
+            "The terminal command that the agent writes to the terminal, if needed.",
           optional: true,
         },
       },

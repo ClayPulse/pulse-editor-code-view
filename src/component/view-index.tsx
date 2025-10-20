@@ -51,6 +51,7 @@ export default function ViewIndex() {
         {
           userMessage,
           code: fileContent,
+          isFileOpen: !!file,
         }
       );
 

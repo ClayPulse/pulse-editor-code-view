@@ -2,7 +2,7 @@
   "name": "pulse_editor_code_view",
   "displayName": "Pulse Code Editor",
   "description": "A code editor based on CodeMirror 6 for Pulse Editor.",
-  "version": "0.0.17",
+  "version": "0.0.20",
   "private": true,
   "type": "module",
   "scripts": {
