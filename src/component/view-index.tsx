@@ -18,7 +18,7 @@ export default function ViewIndex() {
   const { toggleLoading, isReady } = useLoading();
   const { receivedFileUri } = useReceiveFile();
 
-  const { file, saveFile } = useFile(receivedFileUri);
+  const { file, saveFile } = useFile(receivedFileUri, 200);
   const { runAppAction } = useOwnedAppView();
   const { runAgentMethod } = useAgents();
 
