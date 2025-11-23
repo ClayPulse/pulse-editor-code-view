@@ -1,9 +1,6 @@
 import { AppConfig, AppTypeEnum } from "@pulse-editor/shared-utils";
 import packageJson from "./package.json" with { type: "json" };
 import { preRegisteredActions } from "./pregistered-actions";
-import { inlineSuggestionAgent } from "./src/lib/agents/inline-suggestion-agent";
-import { codeEditorAgent } from "./src/lib/agents/code-editor-agent";
-import { vibeCodeAgent } from "./src/lib/agents/vibe-code-agent";
 
 /**
  * Pulse Editor Extension Config
@@ -18,17 +15,11 @@ const config: AppConfig = {
   displayName: packageJson.displayName,
   description: packageJson.description,
   appType: AppTypeEnum.FileView,
-  visibility: "public",
-  recommendedHeight: 360,
-  recommendedWidth: 640,
+  visibility: "unlisted",
+  recommendedHeight: 640,
+  recommendedWidth: 360,
   thumbnail: "assets/thumbnail.png",
   preRegisteredActions: Object.values(preRegisteredActions),
-   fileTypes: ["txt", "json", "py", "cpp", "c", "tsx", "ts", "js", "jsx", "html", "markdown", "md", "yml", "gitignore"],
-  agents: [
-    inlineSuggestionAgent,
-    codeEditorAgent,
-    vibeCodeAgent,
-  ],
 };
 
 export default config;
