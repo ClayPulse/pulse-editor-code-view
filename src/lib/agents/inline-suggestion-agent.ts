@@ -8,9 +8,8 @@ export const inlineSuggestionAgent: Agent = {
   systemPrompt: `You are a helpful code copilot who helps a software developer to code. \
 You will fill in the middle of the code where "<FILL>" is indicated. `,
   LLMConfig: {
-    provider: "openai",
-    modelName: "gpt-4o-mini",
-    temperature: 0.7,
+    modelId: "openai/gpt-5-mini",
+    temperature: 0.95,
   },
   availableMethods: [
     {

@@ -84,8 +84,7 @@ Knowledge:
     },
   ],
   LLMConfig: {
-    provider: "openai",
-    modelName: "gpt-4o",
+    modelId: "openai/gpt-4o",
     temperature: 0.95,
   },
 };
