@@ -1,3 +1,6 @@
+> [!WARNING]
+> This repo is deprecated. This project is moved to monorepo: https://github.com/ClayPulse/official-pulse-apps
+
 ## Pulse Editor Extension Template
 This is a React template which you can use to make your own Pulse Editor extension. It uses Webpack Module Federation to share extensions with Pulse Editor.
 
